@@ -467,7 +467,7 @@ namespace AtomSampleViewer
         AzFramework::InputChannelEventListener::BusConnect();
         TickBus::Handler::BusConnect();
 
-        bool targetSampleFound = false;
+        [[maybe_unused]] bool targetSampleFound = false;
 
         if (AZStd::string targetSampleName = GetTargetSampleName();
             !targetSampleName.empty())

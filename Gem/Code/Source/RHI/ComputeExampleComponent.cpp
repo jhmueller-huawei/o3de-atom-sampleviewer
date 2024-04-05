@@ -232,7 +232,7 @@ namespace AtomSampleViewer
         using namespace AZ;
         RHI::Ptr<RHI::Device> device = Utils::GetRHIDevice();
 
-        RHI::ResultCode result = RHI::ResultCode::Success;
+        [[maybe_unused]] RHI::ResultCode result = RHI::ResultCode::Success;
         m_computeBufferPool = aznew RHI::MultiDeviceBufferPool();
 
         RHI::BufferPoolDescriptor bufferPoolDesc;
