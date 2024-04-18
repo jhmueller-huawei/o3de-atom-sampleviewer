@@ -626,15 +626,6 @@ namespace AtomSampleViewer
         const auto prepareFunction = [this]([[maybe_unused]] RHI::FrameGraphInterface frameGraph, [[maybe_unused]] ScopeData& scopeData)
         {
             {
-                RHI::BufferScopeAttachmentDescriptor descriptor{};
-                descriptor.m_attachmentId = m_bufferAttachmentIds[0];
-                descriptor.m_bufferViewDescriptor = RHI::BufferViewDescriptor::CreateRaw(0, m_stagingBufferToGPU->GetDescriptor().m_byteCount);
-                descriptor.m_loadStoreAction.m_loadAction = RHI::AttachmentLoadAction::Load;
-                descriptor.m_loadStoreAction.m_storeAction = RHI::AttachmentStoreAction::DontCare;
-                frameGraph.UseCopyAttachment(descriptor, RHI::ScopeAttachmentAccess::Read);
-            }
-
-            {
                 RHI::ImageScopeAttachmentDescriptor descriptor{};
                 descriptor.m_attachmentId = m_imageAttachmentIds[1];
                 descriptor.m_loadStoreAction.m_loadAction = RHI::AttachmentLoadAction::DontCare;
