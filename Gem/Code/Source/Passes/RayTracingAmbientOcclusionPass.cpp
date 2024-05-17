@@ -87,7 +87,7 @@ namespace AZ
             AZ_Assert(m_shaderResourceGroup, "[RayTracingAmbientOcclusionPass '%s']: Failed to create SRG from shader asset '%s'",
                 GetPathName().GetCStr(), rayGenerationShaderFilePath);
                         
-            RHI::MultiDeviceRayTracingPipelineStateDescriptor descriptor;
+            RHI::RayTracingPipelineStateDescriptor descriptor;
             descriptor.Build()
                 ->PipelineState(m_globalPipelineState.get())
                 ->ShaderLibrary(rayGenerationShaderDescriptor)
@@ -101,7 +101,7 @@ namespace AZ
                 ;
 
             // create the ray tracing pipeline state object
-            m_rayTracingPipelineState = aznew RHI::MultiDeviceRayTracingPipelineState;
+            m_rayTracingPipelineState = aznew RHI::RayTracingPipelineState;
             m_rayTracingPipelineState->Init(RHI::MultiDevice::AllDevices, descriptor);
         }
 
@@ -118,13 +118,13 @@ namespace AZ
 
             if (!m_rayTracingShaderTable)
             {
-                RHI::MultiDeviceRayTracingBufferPools& rayTracingBufferPools = m_rayTracingFeatureProcessor->GetBufferPools();
+                RHI::RayTracingBufferPools& rayTracingBufferPools = m_rayTracingFeatureProcessor->GetBufferPools();
 
                 // Build shader table once. Since we are not using local srg so we don't need to rebuild it even when scene changed 
-                m_rayTracingShaderTable = aznew RHI::MultiDeviceRayTracingShaderTable;
+                m_rayTracingShaderTable = aznew RHI::RayTracingShaderTable;
                 m_rayTracingShaderTable->Init(RHI::MultiDevice::AllDevices, rayTracingBufferPools);
 
-                AZStd::shared_ptr<RHI::MultiDeviceRayTracingShaderTableDescriptor> descriptor = AZStd::make_shared<RHI::MultiDeviceRayTracingShaderTableDescriptor>();
+                AZStd::shared_ptr<RHI::RayTracingShaderTableDescriptor> descriptor = AZStd::make_shared<RHI::RayTracingShaderTableDescriptor>();
                 descriptor->Build(AZ::Name("RayTracingAOShaderTable"), m_rayTracingPipelineState)
                     ->RayGenerationRecord(AZ::Name("AoRayGen"))
                     ->MissRecord(AZ::Name("AoMiss"))

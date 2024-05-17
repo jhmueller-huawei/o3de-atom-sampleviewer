@@ -145,16 +145,16 @@ namespace AtomSampleViewer
     {
         using namespace AZ;
         RHI::Ptr<RHI::Device> device = Utils::GetRHIDevice();
-        m_inputAssemblyBufferPool = aznew RHI::MultiDeviceBufferPool();
+        m_inputAssemblyBufferPool = aznew RHI::BufferPool();
 
         RHI::BufferPoolDescriptor bufferPoolDesc;
         bufferPoolDesc.m_bindFlags = RHI::BufferBindFlags::InputAssembly | RHI::BufferBindFlags::ShaderReadWrite;
         bufferPoolDesc.m_heapMemoryLevel = RHI::HeapMemoryLevel::Device;
         m_inputAssemblyBufferPool->Init(RHI::MultiDevice::AllDevices, bufferPoolDesc);
 
-        m_inputAssemblyBuffer = aznew RHI::MultiDeviceBuffer();
+        m_inputAssemblyBuffer = aznew RHI::Buffer();
 
-        RHI::MultiDeviceBufferInitRequest request;
+        RHI::BufferInitRequest request;
         request.m_buffer = m_inputAssemblyBuffer.get();
         request.m_descriptor = RHI::BufferDescriptor{ RHI::BufferBindFlags::InputAssembly | RHI::BufferBindFlags::ShaderReadWrite, sizeof(BufferData) };
         request.m_initialData = nullptr;
@@ -371,7 +371,7 @@ namespace AtomSampleViewer
                 {
                     m_streamBufferView[0] = {*(inputAssemblyBufferView->GetBuffer()), 0, sizeof(BufferData), sizeof(BufferData::value_type)};
 
-                    RHI::ValidateStreamBufferViews(m_inputStreamLayout, AZStd::span<const RHI::MultiDeviceStreamBufferView>(&m_streamBufferView[0], 1));
+                    RHI::ValidateStreamBufferViews(m_inputStreamLayout, AZStd::span<const RHI::StreamBufferView>(&m_streamBufferView[0], 1));
                 }
             }
 
@@ -381,7 +381,7 @@ namespace AtomSampleViewer
                 {
                     m_streamBufferView[1] = {*(inputAssemblyBufferView->GetBuffer()), 0, sizeof(BufferData), sizeof(BufferData::value_type)};
 
-                    RHI::ValidateStreamBufferViews(m_inputStreamLayout, AZStd::span<const RHI::MultiDeviceStreamBufferView>(&m_streamBufferView[1], 1));
+                    RHI::ValidateStreamBufferViews(m_inputStreamLayout, AZStd::span<const RHI::StreamBufferView>(&m_streamBufferView[1], 1));
                 }
             }
         };

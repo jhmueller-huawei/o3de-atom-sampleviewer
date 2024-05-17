@@ -204,7 +204,7 @@ namespace AtomSampleViewer
     void TextureMapExampleComponent::CreateInputAssemblyBufferPool()
     {
         const AZ::RHI::Ptr<AZ::RHI::Device> device = Utils::GetRHIDevice();
-        m_inputAssemblyBufferPool = aznew AZ::RHI::MultiDeviceBufferPool();
+        m_inputAssemblyBufferPool = aznew AZ::RHI::BufferPool();
 
         AZ::RHI::BufferPoolDescriptor bufferPoolDesc;
         bufferPoolDesc.m_bindFlags = AZ::RHI::BufferBindFlags::InputAssembly;
@@ -771,9 +771,9 @@ namespace AtomSampleViewer
         uint32_t uvSize, void* uvData, uint32_t uvTypeSize,
         uint32_t indexSize, void* indexData)
     {
-        m_positionBuffer[target] = aznew AZ::RHI::MultiDeviceBuffer();
+        m_positionBuffer[target] = aznew AZ::RHI::Buffer();
         AZ::RHI::ResultCode result = AZ::RHI::ResultCode::Success;
-        AZ::RHI::MultiDeviceBufferInitRequest request;
+        AZ::RHI::BufferInitRequest request;
         request.m_buffer = m_positionBuffer[target].get();
         request.m_descriptor = AZ::RHI::BufferDescriptor{ AZ::RHI::BufferBindFlags::InputAssembly, posSize };
         request.m_initialData = posData;
@@ -792,7 +792,7 @@ namespace AtomSampleViewer
             sizeof(VertexPosition)
         };
 
-        m_uvBuffer[target] = aznew AZ::RHI::MultiDeviceBuffer();
+        m_uvBuffer[target] = aznew AZ::RHI::Buffer();
         request.m_buffer = m_uvBuffer[target].get();
         request.m_descriptor = AZ::RHI::BufferDescriptor{ AZ::RHI::BufferBindFlags::InputAssembly, uvSize };
         request.m_initialData = uvData;
@@ -811,7 +811,7 @@ namespace AtomSampleViewer
             uvTypeSize
         };
 
-        m_indexBuffer[target] = aznew AZ::RHI::MultiDeviceBuffer();
+        m_indexBuffer[target] = aznew AZ::RHI::Buffer();
         request.m_buffer = m_indexBuffer[target].get();
         request.m_descriptor = AZ::RHI::BufferDescriptor{ AZ::RHI::BufferBindFlags::InputAssembly, indexSize };
         request.m_initialData = indexData;

@@ -78,7 +78,7 @@ namespace AtomSampleViewer
         AZ::RHI::PipelineStateDescriptorForDraw pipelineStateDescriptor;
 
         {
-            m_bufferPool = aznew RHI::MultiDeviceBufferPool();
+            m_bufferPool = aznew RHI::BufferPool();
 
             RHI::BufferPoolDescriptor bufferPoolDesc;
             bufferPoolDesc.m_bindFlags = RHI::BufferBindFlags::InputAssembly;
@@ -94,12 +94,12 @@ namespace AtomSampleViewer
             SetVertexUV(m_bufferData.m_uvs.data(), 2, 1.0f, 1.0f);
             SetVertexUV(m_bufferData.m_uvs.data(), 3, 1.0f, 0.0f);
 
-            m_positionBuffer = aznew RHI::MultiDeviceBuffer();
-            m_indexBuffer = aznew RHI::MultiDeviceBuffer();
-            m_uvBuffer = aznew RHI::MultiDeviceBuffer();
+            m_positionBuffer = aznew RHI::Buffer();
+            m_indexBuffer = aznew RHI::Buffer();
+            m_uvBuffer = aznew RHI::Buffer();
 
             RHI::ResultCode result = RHI::ResultCode::Success;
-            RHI::MultiDeviceBufferInitRequest request;
+            RHI::BufferInitRequest request;
             
             request.m_buffer = m_indexBuffer.get();
             request.m_descriptor = RHI::BufferDescriptor{ RHI::BufferBindFlags::InputAssembly, indexBufSize };
@@ -330,7 +330,7 @@ namespace AtomSampleViewer
 
     void CopyQueueComponent::UploadVertexBuffer()
     {
-        AZ::RHI::MultiDeviceBufferStreamRequest request;
+        AZ::RHI::BufferStreamRequest request;
         request.m_buffer = m_positionBuffer.get();
         request.m_byteCount = static_cast<uint32_t>(m_bufferData.m_positions.size() * sizeof(VertexPosition));
         request.m_sourceData = m_bufferData.m_positions.data();

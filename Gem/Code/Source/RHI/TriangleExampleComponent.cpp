@@ -64,7 +64,7 @@ namespace AtomSampleViewer
         AZ::RHI::PipelineStateDescriptorForDraw pipelineStateDescriptor;
 
         {
-            m_inputAssemblyBufferPool = aznew RHI::MultiDeviceBufferPool();
+            m_inputAssemblyBufferPool = aznew RHI::BufferPool();
 
             RHI::BufferPoolDescriptor bufferPoolDesc;
             bufferPoolDesc.m_bindFlags = RHI::BufferBindFlags::InputAssembly;
@@ -83,9 +83,9 @@ namespace AtomSampleViewer
 
             SetVertexIndexIncreasing(bufferData.m_indices.data(), bufferData.m_indices.size());
 
-            m_inputAssemblyBuffer = aznew RHI::MultiDeviceBuffer();
+            m_inputAssemblyBuffer = aznew RHI::Buffer();
 
-            RHI::MultiDeviceBufferInitRequest request;
+            RHI::BufferInitRequest request;
             request.m_buffer = m_inputAssemblyBuffer.get();
             request.m_descriptor = RHI::BufferDescriptor{ RHI::BufferBindFlags::InputAssembly, sizeof(bufferData) };
             request.m_initialData = &bufferData;

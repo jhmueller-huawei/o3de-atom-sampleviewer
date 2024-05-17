@@ -14,7 +14,7 @@
 
 #include <Atom/Component/DebugCamera/ArcBallControllerComponent.h>
 #include <Atom/RHI/CommandList.h>
-#include <Atom/RHI/MultiDeviceIndirectBufferWriter.h>
+#include <Atom/RHI/IndirectBufferWriter.h>
 #include <Atom/RHI.Reflect/InputStreamLayoutBuilder.h>
 #include <Atom/RHI.Reflect/RenderAttachmentLayoutBuilder.h>
 #include <Atom/RPI.Public/Shader/Shader.h>

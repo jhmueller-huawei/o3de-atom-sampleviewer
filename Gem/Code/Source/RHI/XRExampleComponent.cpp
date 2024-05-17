@@ -194,7 +194,7 @@ namespace AtomSampleViewer
         const AZ::RHI::Ptr<AZ::RHI::Device> device = Utils::GetRHIDevice();
         AZ::RHI::ResultCode result = AZ::RHI::ResultCode::Success;
 
-        m_bufferPool = aznew AZ::RHI::MultiDeviceBufferPool();
+        m_bufferPool = aznew AZ::RHI::BufferPool();
         AZ::RHI::BufferPoolDescriptor bufferPoolDesc;
         bufferPoolDesc.m_bindFlags = AZ::RHI::BufferBindFlags::InputAssembly;
         bufferPoolDesc.m_heapMemoryLevel = AZ::RHI::HeapMemoryLevel::Device;
@@ -207,8 +207,8 @@ namespace AtomSampleViewer
 
         SingleCubeBufferData bufferData = CreateSingleCubeBufferData();
 
-        m_inputAssemblyBuffer = aznew AZ::RHI::MultiDeviceBuffer();
-        AZ::RHI::MultiDeviceBufferInitRequest request;
+        m_inputAssemblyBuffer = aznew AZ::RHI::Buffer();
+        AZ::RHI::BufferInitRequest request;
 
         request.m_buffer = m_inputAssemblyBuffer.get();
         request.m_descriptor = AZ::RHI::BufferDescriptor{ AZ::RHI::BufferBindFlags::InputAssembly, sizeof(SingleCubeBufferData) };

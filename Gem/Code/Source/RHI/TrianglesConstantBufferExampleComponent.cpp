@@ -95,10 +95,10 @@ namespace AtomSampleViewer
 
     void TrianglesConstantBufferExampleComponent::UploadDataToConstantBuffer(InstanceInfo* data, uint32_t elementSize, uint32_t elementCount)
     {
-        AZ::RHI::MultiDeviceBufferMapRequest mapRequest;
+        AZ::RHI::BufferMapRequest mapRequest;
         mapRequest.m_buffer = m_constantBuffer.get();
         mapRequest.m_byteCount = elementSize * elementCount;
-        AZ::RHI::MultiDeviceBufferMapResponse mapResponse;
+        AZ::RHI::BufferMapResponse mapResponse;
         AZ::RHI::ResultCode resultCode = m_constantBufferPool->MapBuffer(mapRequest, mapResponse);
         if (resultCode == AZ::RHI::ResultCode::Success)
         {
@@ -120,7 +120,7 @@ namespace AtomSampleViewer
 
         // Creates Input Assembly buffer and Streams/Index Views
         {
-            m_inputAssemblyBufferPool = aznew RHI::MultiDeviceBufferPool();
+            m_inputAssemblyBufferPool = aznew RHI::BufferPool();
 
             RHI::BufferPoolDescriptor bufferPoolDesc;
             bufferPoolDesc.m_bindFlags = RHI::BufferBindFlags::InputAssembly;
@@ -139,9 +139,9 @@ namespace AtomSampleViewer
 
             SetVertexIndexIncreasing(bufferData.m_indices.data(), bufferData.m_indices.size());
 
-            m_inputAssemblyBuffer = aznew RHI::MultiDeviceBuffer();
+            m_inputAssemblyBuffer = aznew RHI::Buffer();
 
-            RHI::MultiDeviceBufferInitRequest request;
+            RHI::BufferInitRequest request;
             request.m_buffer = m_inputAssemblyBuffer.get();
             request.m_descriptor = RHI::BufferDescriptor{ RHI::BufferBindFlags::InputAssembly, sizeof(bufferData) };
             request.m_initialData = &bufferData;
@@ -181,7 +181,7 @@ namespace AtomSampleViewer
 
         // Create the buffer pool where both buffers get allocated from
         {
-            m_constantBufferPool = aznew RHI::MultiDeviceBufferPool();
+            m_constantBufferPool = aznew RHI::BufferPool();
             RHI::BufferPoolDescriptor constantBufferPoolDesc;
             constantBufferPoolDesc.m_bindFlags = RHI::BufferBindFlags::Constant;
             constantBufferPoolDesc.m_heapMemoryLevel = RHI::HeapMemoryLevel::Device;
@@ -303,8 +303,8 @@ namespace AtomSampleViewer
         using namespace AZ;
         const uint32_t constantBufferSize = sizeof(InstanceInfo) * s_numberOfTrianglesTotal;
 
-        m_constantBuffer = aznew RHI::MultiDeviceBuffer();
-        RHI::MultiDeviceBufferInitRequest request;
+        m_constantBuffer = aznew RHI::Buffer();
+        RHI::BufferInitRequest request;
         request.m_buffer = m_constantBuffer.get();
         request.m_descriptor = RHI::BufferDescriptor{ RHI::BufferBindFlags::Constant, constantBufferSize };
         [[maybe_unused]] RHI::ResultCode result = m_constantBufferPool->InitBuffer(request);

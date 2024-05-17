@@ -56,7 +56,7 @@ namespace AtomSampleViewer
         AZ::RHI::PipelineStateDescriptorForDraw pipelineStateDescriptor;
 
         {
-            m_bufferPool = aznew RHI::MultiDeviceBufferPool();
+            m_bufferPool = aznew RHI::BufferPool();
 
             RHI::BufferPoolDescriptor bufferPoolDesc;
             bufferPoolDesc.m_bindFlags = RHI::BufferBindFlags::InputAssembly;
@@ -65,12 +65,12 @@ namespace AtomSampleViewer
 
             SetFullScreenRect(bufferData.m_positions.data(), bufferData.m_uvs.data(), bufferData.m_indices.data());
 
-            m_positionBuffer = aznew RHI::MultiDeviceBuffer();
-            m_indexBuffer = aznew RHI::MultiDeviceBuffer();
-            m_uvBuffer = aznew RHI::MultiDeviceBuffer();
+            m_positionBuffer = aznew RHI::Buffer();
+            m_indexBuffer = aznew RHI::Buffer();
+            m_uvBuffer = aznew RHI::Buffer();
 
             RHI::ResultCode result = RHI::ResultCode::Success;
-            RHI::MultiDeviceBufferInitRequest request;
+            RHI::BufferInitRequest request;
 
             request.m_buffer = m_positionBuffer.get();
             request.m_descriptor = RHI::BufferDescriptor{ RHI::BufferBindFlags::InputAssembly, positionBufSize };

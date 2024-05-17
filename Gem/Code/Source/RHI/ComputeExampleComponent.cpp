@@ -101,7 +101,7 @@ namespace AtomSampleViewer
         using namespace AZ;
         RHI::Ptr<RHI::Device> device = Utils::GetRHIDevice();
 
-        m_inputAssemblyBufferPool = aznew RHI::MultiDeviceBufferPool();
+        m_inputAssemblyBufferPool = aznew RHI::BufferPool();
 
         RHI::BufferPoolDescriptor bufferPoolDesc;
         bufferPoolDesc.m_bindFlags = RHI::BufferBindFlags::InputAssembly;
@@ -111,9 +111,9 @@ namespace AtomSampleViewer
         BufferData bufferData;
         SetFullScreenRect(bufferData.m_positions.data(), bufferData.m_uvs.data(), bufferData.m_indices.data());
 
-        m_inputAssemblyBuffer = aznew RHI::MultiDeviceBuffer();
+        m_inputAssemblyBuffer = aznew RHI::Buffer();
 
-        RHI::MultiDeviceBufferInitRequest request;
+        RHI::BufferInitRequest request;
         request.m_buffer = m_inputAssemblyBuffer.get();
         request.m_descriptor = RHI::BufferDescriptor{ RHI::BufferBindFlags::InputAssembly, sizeof(bufferData) };
         request.m_initialData = &bufferData;
@@ -233,7 +233,7 @@ namespace AtomSampleViewer
         RHI::Ptr<RHI::Device> device = Utils::GetRHIDevice();
 
         [[maybe_unused]] RHI::ResultCode result = RHI::ResultCode::Success;
-        m_computeBufferPool = aznew RHI::MultiDeviceBufferPool();
+        m_computeBufferPool = aznew RHI::BufferPool();
 
         RHI::BufferPoolDescriptor bufferPoolDesc;
         bufferPoolDesc.m_bindFlags = RHI::BufferBindFlags::ShaderReadWrite;
@@ -243,10 +243,10 @@ namespace AtomSampleViewer
         result = m_computeBufferPool->Init(RHI::MultiDevice::AllDevices, bufferPoolDesc);
         AZ_Assert(result == RHI::ResultCode::Success, "Failed to initialized compute buffer pool");
 
-        m_computeBuffer = aznew RHI::MultiDeviceBuffer();
+        m_computeBuffer = aznew RHI::Buffer();
         uint32_t bufferSize = m_bufferWidth * m_bufferHeight * RHI::GetFormatSize(RHI::Format::R32G32B32A32_FLOAT);
 
-        RHI::MultiDeviceBufferInitRequest request;
+        RHI::BufferInitRequest request;
         request.m_buffer = m_computeBuffer.get();
         request.m_descriptor = RHI::BufferDescriptor{ RHI::BufferBindFlags::ShaderReadWrite, bufferSize };
         result = m_computeBufferPool->InitBuffer(request);

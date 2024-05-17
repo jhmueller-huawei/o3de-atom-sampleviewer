@@ -59,7 +59,7 @@ namespace AtomSampleViewer
         };
 
         RHI::Ptr<RHI::Device> device = Utils::GetRHIDevice();
-        m_inputAssemblyBufferPool = aznew RHI::MultiDeviceBufferPool();
+        m_inputAssemblyBufferPool = aznew RHI::BufferPool();
 
         // Load the shader
         {
@@ -133,10 +133,10 @@ namespace AtomSampleViewer
             bufferPoolDesc.m_bindFlags = RHI::BufferBindFlags::InputAssembly;
             bufferPoolDesc.m_heapMemoryLevel = RHI::HeapMemoryLevel::Device;
             m_inputAssemblyBufferPool->Init(RHI::MultiDevice::AllDevices, bufferPoolDesc);
-            m_rectangleInputAssemblyBuffer = aznew RHI::MultiDeviceBuffer();
+            m_rectangleInputAssemblyBuffer = aznew RHI::Buffer();
 
             RHI::ResultCode result = RHI::ResultCode::Success;
-            RHI::MultiDeviceBufferInitRequest request;
+            RHI::BufferInitRequest request;
             request.m_buffer = m_rectangleInputAssemblyBuffer.get();
             request.m_descriptor = RHI::BufferDescriptor{ RHI::BufferBindFlags::InputAssembly, sizeof(bufferData) };
             request.m_initialData = &bufferData;

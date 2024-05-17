@@ -224,7 +224,7 @@ namespace AtomSampleViewer
         AZ::RHI::PipelineStateDescriptorForDraw pipelineStateDescriptor;
 
         {
-            m_inputAssemblyBufferPool = aznew RHI::MultiDeviceBufferPool();
+            m_inputAssemblyBufferPool = aznew RHI::BufferPool();
 
             RHI::BufferPoolDescriptor bufferPoolDesc;
             bufferPoolDesc.m_bindFlags = RHI::BufferBindFlags::InputAssembly;
@@ -241,9 +241,9 @@ namespace AtomSampleViewer
             SetVertexColor(bufferData.m_colors.data(), 2, 0.0, 0.0, 1.0, 1.0);
             SetVertexColor(bufferData.m_colors.data(), 3, 0.0, 0.0, 1.0, 1.0);
 
-            m_inputAssemblyBuffer = aznew RHI::MultiDeviceBuffer();
+            m_inputAssemblyBuffer = aznew RHI::Buffer();
 
-            RHI::MultiDeviceBufferInitRequest request;
+            RHI::BufferInitRequest request;
             request.m_buffer = m_inputAssemblyBuffer.get();
             request.m_descriptor = RHI::BufferDescriptor{ RHI::BufferBindFlags::InputAssembly, sizeof(bufferData) };
             request.m_initialData = &bufferData;

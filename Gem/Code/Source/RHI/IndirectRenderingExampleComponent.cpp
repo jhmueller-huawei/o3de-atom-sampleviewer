@@ -12,7 +12,7 @@
 #include <SampleComponentManager.h>
 
 #include <Atom/RHI/CommandList.h>
-#include <Atom/RHI/MultiDeviceIndirectBufferWriter.h>
+#include <Atom/RHI/IndirectBufferWriter.h>
 #include <Atom/RHI.Reflect/InputStreamLayoutBuilder.h>
 #include <Atom/RHI.Reflect/RenderAttachmentLayoutBuilder.h>
 #include <Atom/RPI.Public/Shader/Shader.h>
@@ -116,12 +116,12 @@ namespace AtomSampleViewer
     {
         RHI::Ptr<RHI::Device> device = Utils::GetRHIDevice();
 
-        RHI::MultiDeviceStreamBufferView& triangleStreamBufferView = m_streamBufferViews[0];
-        RHI::MultiDeviceStreamBufferView& instancesIndicesStreamBufferView = m_streamBufferViews[1];
-        RHI::MultiDeviceStreamBufferView& quadStreamBufferView = m_streamBufferViews[2];
+        RHI::StreamBufferView& triangleStreamBufferView = m_streamBufferViews[0];
+        RHI::StreamBufferView& instancesIndicesStreamBufferView = m_streamBufferViews[1];
+        RHI::StreamBufferView& quadStreamBufferView = m_streamBufferViews[2];
 
-        RHI::MultiDeviceIndexBufferView& triangleIndexBufferView = m_indexBufferViews[0];
-        RHI::MultiDeviceIndexBufferView& quadIndexBufferView = m_indexBufferViews[1];
+        RHI::IndexBufferView& triangleIndexBufferView = m_indexBufferViews[0];
+        RHI::IndexBufferView& quadIndexBufferView = m_indexBufferViews[1];
 
         // We use an index to identify an object at draw time.
         // On platforms that support setting inline constant through indirect commands we use an inline constant to set
@@ -134,7 +134,7 @@ namespace AtomSampleViewer
         layoutBuilder.AddBuffer(RHI::StreamStepFunction::PerInstance)->Channel("BLENDINDICES0", RHI::Format::R32_UINT);
         m_inputStreamLayout = layoutBuilder.End();
 
-        m_inputAssemblyBufferPool = aznew RHI::MultiDeviceBufferPool();
+        m_inputAssemblyBufferPool = aznew RHI::BufferPool();
 
         RHI::BufferPoolDescriptor bufferPoolDesc;
         bufferPoolDesc.m_bindFlags = RHI::BufferBindFlags::InputAssembly;
@@ -158,9 +158,9 @@ namespace AtomSampleViewer
                 bufferData.m_instanceIndices[i] = i;
             }
 
-            m_inputAssemblyBuffer = aznew RHI::MultiDeviceBuffer();
+            m_inputAssemblyBuffer = aznew RHI::Buffer();
 
-            RHI::MultiDeviceBufferInitRequest request;
+            RHI::BufferInitRequest request;
             request.m_buffer = m_inputAssemblyBuffer.get();
             request.m_descriptor = RHI::BufferDescriptor{ RHI::BufferBindFlags::InputAssembly, sizeof(bufferData) };
             request.m_initialData = &bufferData;
@@ -239,7 +239,7 @@ namespace AtomSampleViewer
                 sizeof(uint32_t)
             };
 
-            RHI::ValidateStreamBufferViews(m_inputStreamLayout, AZStd::span<const RHI::MultiDeviceStreamBufferView>(m_streamBufferViews.data(), 2));
+            RHI::ValidateStreamBufferViews(m_inputStreamLayout, AZStd::span<const RHI::StreamBufferView>(m_streamBufferViews.data(), 2));
         }
     }
 
@@ -332,7 +332,7 @@ namespace AtomSampleViewer
         RHI::Ptr<RHI::Device> device = Utils::GetRHIDevice();
         RHI::ResultCode result;
 
-        m_shaderBufferPool = aznew RHI::MultiDeviceBufferPool();
+        m_shaderBufferPool = aznew RHI::BufferPool();
 
         RHI::BufferPoolDescriptor bufferPoolDesc;
         bufferPoolDesc.m_bindFlags = RHI::BufferBindFlags::ShaderRead | RHI::BufferBindFlags::Indirect;
@@ -357,8 +357,8 @@ namespace AtomSampleViewer
 
         // Create the signature and pass the pipeline state since we may have
         // an inline constants command.
-        m_indirectDrawBufferSignature = aznew RHI::MultiDeviceIndirectBufferSignature;
-        RHI::MultiDeviceIndirectBufferSignatureDescriptor signatureDescriptor;
+        m_indirectDrawBufferSignature = aznew RHI::IndirectBufferSignature;
+        RHI::IndirectBufferSignatureDescriptor signatureDescriptor;
         signatureDescriptor.m_layout = m_indirectDrawBufferLayout;
         signatureDescriptor.m_pipelineState = m_drawPipelineState.get();
         result = m_indirectDrawBufferSignature->Init(RHI::MultiDevice::AllDevices, signatureDescriptor);
@@ -369,10 +369,10 @@ namespace AtomSampleViewer
             return;
         }
 
-        m_sourceIndirectBuffer = aznew RHI::MultiDeviceBuffer();
+        m_sourceIndirectBuffer = aznew RHI::Buffer();
 
         uint32_t commandsStride = m_indirectDrawBufferSignature->GetByteStride();
-        RHI::MultiDeviceBufferInitRequest request;
+        RHI::BufferInitRequest request;
         request.m_buffer = m_sourceIndirectBuffer.get();
         request.m_descriptor = RHI::BufferDescriptor(
             bufferPoolDesc.m_bindFlags,
@@ -380,7 +380,7 @@ namespace AtomSampleViewer
         m_shaderBufferPool->InitBuffer(request);
 
         // Create a writer to populate the buffer with the commands.
-        RHI::Ptr<RHI::MultiDeviceIndirectBufferWriter> indirectBufferWriter = aznew RHI::MultiDeviceIndirectBufferWriter;
+        RHI::Ptr<RHI::IndirectBufferWriter> indirectBufferWriter = aznew RHI::IndirectBufferWriter;
         result = indirectBufferWriter->Init(*m_sourceIndirectBuffer, 0, commandsStride, s_maxNumberOfObjects, *m_indirectDrawBufferSignature);
         if (result != RHI::ResultCode::Success)
         {
@@ -388,11 +388,11 @@ namespace AtomSampleViewer
             return;
         }
 
-        RHI::MultiDeviceStreamBufferView& triangleStreamBufferView = m_streamBufferViews[0];
-        RHI::MultiDeviceStreamBufferView& quadStreamBufferView = m_streamBufferViews[2];
+        RHI::StreamBufferView& triangleStreamBufferView = m_streamBufferViews[0];
+        RHI::StreamBufferView& quadStreamBufferView = m_streamBufferViews[2];
 
-        RHI::MultiDeviceIndexBufferView& triangleIndexBufferView = m_indexBufferViews[0];
-        RHI::MultiDeviceIndexBufferView& quadIndexBufferView = m_indexBufferViews[1];
+        RHI::IndexBufferView& triangleIndexBufferView = m_indexBufferViews[0];
+        RHI::IndexBufferView& quadIndexBufferView = m_indexBufferViews[1];
 
         // Write the commands using the IndirectBufferWriter
         // We alternate between drawing a triangle and a quad.
@@ -459,7 +459,7 @@ namespace AtomSampleViewer
         }
 
         // Create the buffer that will contain the compute dispatch arguments.
-        m_indirectDispatchBuffer = aznew RHI::MultiDeviceBuffer();
+        m_indirectDispatchBuffer = aznew RHI::Buffer();
         {
             m_indirectDispatchBufferLayout = RHI::IndirectBufferLayout();
             m_indirectDispatchBufferLayout.AddIndirectCommand(RHI::IndirectCommandDescriptor(RHI::IndirectCommandType::Dispatch));
@@ -469,7 +469,7 @@ namespace AtomSampleViewer
                 return;
             }
 
-            m_indirectDispatchBufferSignature = aznew RHI::MultiDeviceIndirectBufferSignature;
+            m_indirectDispatchBufferSignature = aznew RHI::IndirectBufferSignature;
             signatureDescriptor = {};
             signatureDescriptor.m_layout = m_indirectDispatchBufferLayout;
             result = m_indirectDispatchBufferSignature->Init(RHI::MultiDevice::AllDevices, signatureDescriptor);
@@ -497,7 +497,7 @@ namespace AtomSampleViewer
                 indirectDispatchStride
             };
 
-            m_indirectDispatchWriter = aznew RHI::MultiDeviceIndirectBufferWriter;
+            m_indirectDispatchWriter = aznew RHI::IndirectBufferWriter;
             result = m_indirectDispatchWriter->Init(*m_indirectDispatchBuffer, 0, indirectDispatchStride, 1, *m_indirectDispatchBufferSignature);
             if (result != RHI::ResultCode::Success)
             {
@@ -525,16 +525,16 @@ namespace AtomSampleViewer
             data.m_velocity.Set(GetRandomFloat(IndirectRendering::VelocityRange.GetX(), IndirectRendering::VelocityRange.GetY()));
         }
 
-        m_instancesBufferPool = aznew RHI::MultiDeviceBufferPool();
+        m_instancesBufferPool = aznew RHI::BufferPool();
 
         RHI::BufferPoolDescriptor bufferPoolDesc;
         bufferPoolDesc.m_bindFlags = RHI::BufferBindFlags::ShaderRead;
         bufferPoolDesc.m_heapMemoryLevel = RHI::HeapMemoryLevel::Host;
         m_instancesBufferPool->Init(RHI::MultiDevice::AllDevices, bufferPoolDesc);
 
-        m_instancesDataBuffer = aznew RHI::MultiDeviceBuffer();
+        m_instancesDataBuffer = aznew RHI::Buffer();
 
-        RHI::MultiDeviceBufferInitRequest request;
+        RHI::BufferInitRequest request;
         request.m_buffer = m_instancesDataBuffer.get();
         request.m_descriptor = RHI::BufferDescriptor{
             RHI::BufferBindFlags::ShaderRead,
@@ -556,14 +556,14 @@ namespace AtomSampleViewer
         // the compute shader has culled the commands.
         if (m_deviceSupportsCountBuffer)
         {
-            m_copyBufferPool = aznew RHI::MultiDeviceBufferPool();
+            m_copyBufferPool = aznew RHI::BufferPool();
 
             bufferPoolDesc = {};
             bufferPoolDesc.m_bindFlags = RHI::BufferBindFlags::CopyRead;
             bufferPoolDesc.m_heapMemoryLevel = RHI::HeapMemoryLevel::Host;
             m_copyBufferPool->Init(RHI::MultiDevice::AllDevices, bufferPoolDesc);
 
-            m_resetCounterBuffer = aznew RHI::MultiDeviceBuffer();
+            m_resetCounterBuffer = aznew RHI::Buffer();
 
             AZStd::vector<uint32_t> initData;
             initData.assign(static_cast<size_t>(std::ceil(float(s_maxNumberOfObjects) / maxIndirectDrawCount)), 0);
@@ -841,7 +841,7 @@ namespace AtomSampleViewer
                 m_drawIndirect.m_indirectBufferView = &m_indirectDrawBufferView;
 
                 RHI::SingleDeviceDrawItem drawItem;
-                drawItem.m_arguments = AZ::RHI::MultiDeviceDrawArguments(m_drawIndirect).GetDeviceDrawArguments(context.GetDeviceIndex());
+                drawItem.m_arguments = AZ::RHI::DrawArguments(m_drawIndirect).GetDeviceDrawArguments(context.GetDeviceIndex());
                 drawItem.m_pipelineState = m_drawPipelineState->GetDevicePipelineState(context.GetDeviceIndex()).get();
                 auto deviceIndexBufferView{m_indexBufferViews[0].GetDeviceIndexBufferView(context.GetDeviceIndex())};
                 drawItem.m_indexBufferView = &deviceIndexBufferView;
@@ -1024,8 +1024,8 @@ namespace AtomSampleViewer
             }
         }
 
-        RHI::MultiDeviceBufferMapRequest request(*m_instancesDataBuffer, 0, sizeof(InstanceData) * m_numObjects);
-        RHI::MultiDeviceBufferMapResponse response;
+        RHI::BufferMapRequest request(*m_instancesDataBuffer, 0, sizeof(InstanceData) * m_numObjects);
+        RHI::BufferMapResponse response;
 
         m_instancesBufferPool->MapBuffer(request, response);
         if (!response.m_data.empty())

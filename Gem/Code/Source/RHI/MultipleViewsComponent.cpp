@@ -9,7 +9,7 @@
 
 #include <AzCore/Math/MatrixUtils.h>
 
-#include <Atom/RHI/MultiDeviceBufferPool.h>
+#include <Atom/RHI/BufferPool.h>
 #include <Atom/RHI/Factory.h>
 #include <Atom/RHI/FrameAttachment.h>
 #include <Atom/RHI.Reflect/InputStreamLayoutBuilder.h>
@@ -235,7 +235,7 @@ namespace AtomSampleViewer
 
         const AZ::RHI::Ptr<AZ::RHI::Device> device = Utils::GetRHIDevice();
 
-        m_bufferPool = aznew AZ::RHI::MultiDeviceBufferPool();
+        m_bufferPool = aznew AZ::RHI::BufferPool();
         AZ::RHI::BufferPoolDescriptor bufferPoolDesc;
         bufferPoolDesc.m_bindFlags = AZ::RHI::BufferBindFlags::InputAssembly;
         bufferPoolDesc.m_heapMemoryLevel = AZ::RHI::HeapMemoryLevel::Device;
@@ -243,9 +243,9 @@ namespace AtomSampleViewer
 
         BufferData bufferData = CreateBufferData();
 
-        m_inputAssemblyBuffer = aznew AZ::RHI::MultiDeviceBuffer();
+        m_inputAssemblyBuffer = aznew AZ::RHI::Buffer();
         AZ::RHI::ResultCode result = AZ::RHI::ResultCode::Success;
-        AZ::RHI::MultiDeviceBufferInitRequest request;
+        AZ::RHI::BufferInitRequest request;
 
         request.m_buffer = m_inputAssemblyBuffer.get();
         request.m_descriptor = AZ::RHI::BufferDescriptor{ AZ::RHI::BufferBindFlags::InputAssembly, sizeof(bufferData) };

@@ -170,7 +170,7 @@ namespace AtomSampleViewer
         using namespace AZ;
         const RHI::Ptr<RHI::Device> device = Utils::GetRHIDevice();
 
-        m_bufferPool = aznew RHI::MultiDeviceBufferPool();
+        m_bufferPool = aznew RHI::BufferPool();
         RHI::BufferPoolDescriptor bufferPoolDesc;
         bufferPoolDesc.m_bindFlags = RHI::BufferBindFlags::InputAssembly;
         bufferPoolDesc.m_heapMemoryLevel = RHI::HeapMemoryLevel::Device;
@@ -179,9 +179,9 @@ namespace AtomSampleViewer
         BufferData bufferData;
         SetFullScreenRect(bufferData.m_positions.data(), bufferData.m_uvs.data(), bufferData.m_indices.data());
 
-        m_inputAssemblyBuffer = aznew RHI::MultiDeviceBuffer();
+        m_inputAssemblyBuffer = aznew RHI::Buffer();
         RHI::ResultCode result = RHI::ResultCode::Success;
-        RHI::MultiDeviceBufferInitRequest request;
+        RHI::BufferInitRequest request;
 
         request.m_buffer = m_inputAssemblyBuffer.get();
         request.m_descriptor = RHI::BufferDescriptor{ RHI::BufferBindFlags::InputAssembly, sizeof(bufferData) };

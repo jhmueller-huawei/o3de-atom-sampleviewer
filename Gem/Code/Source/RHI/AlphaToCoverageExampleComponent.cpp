@@ -50,7 +50,7 @@ namespace AtomSampleViewer
     {
         using namespace AZ;
         RHI::Ptr<RHI::Device> device = Utils::GetRHIDevice();
-        m_inputAssemblyBufferPool = aznew RHI::MultiDeviceBufferPool();
+        m_inputAssemblyBufferPool = aznew RHI::BufferPool();
 
         RHI::BufferPoolDescriptor bufferPoolDesc;
         bufferPoolDesc.m_bindFlags = RHI::BufferBindFlags::InputAssembly;
@@ -145,10 +145,10 @@ namespace AtomSampleViewer
         RectangleBufferData bufferData;
         SetFullScreenRect(bufferData.m_positions.data(), bufferData.m_uvs.data(), bufferData.m_indices.data());
 
-        m_rectangleInputAssemblyBuffer = aznew RHI::MultiDeviceBuffer();
+        m_rectangleInputAssemblyBuffer = aznew RHI::Buffer();
 
         RHI::ResultCode result = RHI::ResultCode::Success;
-        RHI::MultiDeviceBufferInitRequest request;
+        RHI::BufferInitRequest request;
         request.m_buffer = m_rectangleInputAssemblyBuffer.get();
         request.m_descriptor = RHI::BufferDescriptor{RHI::BufferBindFlags::InputAssembly, sizeof(bufferData)};
         request.m_initialData = &bufferData;
